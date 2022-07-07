@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import { createServer } from "./utils/helpers/createServer";
 import { PORT } from "./utils/constants";
 

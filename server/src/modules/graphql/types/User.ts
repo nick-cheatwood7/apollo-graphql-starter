@@ -20,9 +20,6 @@ export const User = objectType({
   name: "User",
   definition(t) {
     t.implements(Node);
-    // t.nonNull.id("id");
-    // t.nonNull.date("createdAt");
-    // t.date("updatedAt");
     t.nonNull.string("email");
     t.nonNull.string("firstName");
     t.string("lastName");

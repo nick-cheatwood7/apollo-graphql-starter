@@ -12,9 +12,12 @@ type LoginResponse {
 }
 
 type Mutation {
+  createPost(options: UpdatePostInput!): UpdatePostResult
+  deletePost(id: String!): UpdatePostResult
   deleteUser(id: String!): UpdateUserResult
   login(email: String!, password: String!): LoginResponse
   register(options: RegisterInput!): RegisterResponse
+  updatePost(id: String!, options: UpdatePostInput!): UpdatePostResult
   updateUser(
     """id of the User to edit"""
     id: String!
@@ -49,6 +52,8 @@ type Post implements Node {
 }
 
 type Query {
+  post(id: String!): Post
+  posts: [Post]
   test(bool: Boolean!): Boolean
   user(
     """id of the user"""
@@ -65,6 +70,16 @@ input RegisterInput {
 }
 
 type RegisterResponse {
+  error: Boolean!
+  message: String!
+}
+
+input UpdatePostInput {
+  message: String!
+  title: String!
+}
+
+type UpdatePostResult {
   error: Boolean!
   message: String!
 }

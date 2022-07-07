@@ -5,6 +5,7 @@
 
 
 import type { Context } from "./../types/Context"
+import type { FieldAuthorizeResolver } from "nexus/dist/plugins/fieldAuthorizePlugin"
 import type { core } from "nexus"
 declare global {
   interface NexusGenCustomInputMethods<TypeName extends string> {
@@ -34,6 +35,10 @@ export interface NexusGenInputs {
     firstName: string; // String!
     lastName?: string | null; // String
     password: string; // String!
+  }
+  UpdatePostInput: { // input type
+    message: string; // String!
+    title: string; // String!
   }
   UpdateUserInput: { // input type
     email: string; // String!
@@ -75,6 +80,10 @@ export interface NexusGenObjects {
     error: boolean; // Boolean!
     message: string; // String!
   }
+  UpdatePostResult: { // root type
+    error: boolean; // Boolean!
+    message: string; // String!
+  }
   UpdateUserResult: { // root type
     error: boolean; // Boolean!
     message: string; // String!
@@ -109,9 +118,12 @@ export interface NexusGenFieldTypes {
     message: string; // String!
   }
   Mutation: { // field return type
+    createPost: NexusGenRootTypes['UpdatePostResult'] | null; // UpdatePostResult
+    deletePost: NexusGenRootTypes['UpdatePostResult'] | null; // UpdatePostResult
     deleteUser: NexusGenRootTypes['UpdateUserResult'] | null; // UpdateUserResult
     login: NexusGenRootTypes['LoginResponse'] | null; // LoginResponse
     register: NexusGenRootTypes['RegisterResponse'] | null; // RegisterResponse
+    updatePost: NexusGenRootTypes['UpdatePostResult'] | null; // UpdatePostResult
     updateUser: NexusGenRootTypes['UpdateUserResult'] | null; // UpdateUserResult
   }
   Post: { // field return type
@@ -124,11 +136,17 @@ export interface NexusGenFieldTypes {
     userId: string; // String!
   }
   Query: { // field return type
+    post: NexusGenRootTypes['Post'] | null; // Post
+    posts: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
     test: boolean | null; // Boolean
     user: NexusGenRootTypes['User'] | null; // User
     users: Array<NexusGenRootTypes['User'] | null> | null; // [User]
   }
   RegisterResponse: { // field return type
+    error: boolean; // Boolean!
+    message: string; // String!
+  }
+  UpdatePostResult: { // field return type
     error: boolean; // Boolean!
     message: string; // String!
   }
@@ -161,9 +179,12 @@ export interface NexusGenFieldTypeNames {
     message: 'String'
   }
   Mutation: { // field return type name
+    createPost: 'UpdatePostResult'
+    deletePost: 'UpdatePostResult'
     deleteUser: 'UpdateUserResult'
     login: 'LoginResponse'
     register: 'RegisterResponse'
+    updatePost: 'UpdatePostResult'
     updateUser: 'UpdateUserResult'
   }
   Post: { // field return type name
@@ -176,11 +197,17 @@ export interface NexusGenFieldTypeNames {
     userId: 'String'
   }
   Query: { // field return type name
+    post: 'Post'
+    posts: 'Post'
     test: 'Boolean'
     user: 'User'
     users: 'User'
   }
   RegisterResponse: { // field return type name
+    error: 'Boolean'
+    message: 'String'
+  }
+  UpdatePostResult: { // field return type name
     error: 'Boolean'
     message: 'String'
   }
@@ -208,6 +235,12 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createPost: { // args
+      options: NexusGenInputs['UpdatePostInput']; // UpdatePostInput!
+    }
+    deletePost: { // args
+      id: string; // String!
+    }
     deleteUser: { // args
       id: string; // String!
     }
@@ -218,12 +251,19 @@ export interface NexusGenArgTypes {
     register: { // args
       options: NexusGenInputs['RegisterInput']; // RegisterInput!
     }
+    updatePost: { // args
+      id: string; // String!
+      options: NexusGenInputs['UpdatePostInput']; // UpdatePostInput!
+    }
     updateUser: { // args
       id: string; // String!
       options: NexusGenInputs['UpdateUserInput']; // UpdateUserInput!
     }
   }
   Query: {
+    post: { // args
+      id: string; // String!
+    }
     test: { // args
       bool: boolean; // Boolean!
     }
@@ -299,6 +339,15 @@ declare global {
   interface NexusGenPluginInputTypeConfig<TypeName extends string> {
   }
   interface NexusGenPluginFieldConfig<TypeName extends string, FieldName extends string> {
+    /**
+     * Authorization for an individual field. Returning "true"
+     * or "Promise<true>" means the field can be accessed.
+     * Returning "false" or "Promise<false>" will respond
+     * with a "Not Authorized" error for the field.
+     * Returning or throwing an error will also prevent the
+     * resolver from executing.
+     */
+    authorize?: FieldAuthorizeResolver<TypeName, FieldName>
   }
   interface NexusGenPluginInputFieldConfig<TypeName extends string, FieldName extends string> {
   }

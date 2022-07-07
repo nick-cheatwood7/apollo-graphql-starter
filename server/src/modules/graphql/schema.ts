@@ -1,4 +1,4 @@
-import { makeSchema } from "nexus";
+import { makeSchema, fieldAuthorizePlugin } from "nexus";
 import { join } from "path";
 import * as types from "./types";
 
@@ -18,5 +18,6 @@ export const schema = makeSchema({
       isTypeOf: false, // default
       __typename: true
     }
-  }
+  },
+  plugins: [fieldAuthorizePlugin()]
 });

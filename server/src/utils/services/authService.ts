@@ -2,7 +2,10 @@ import { User } from "@prisma/client";
 import { sign } from "jsonwebtoken";
 import { Response } from "express";
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../constants";
-import { AccessTokenPayload, RefreshTokenPayload } from "types/TokenPayload";
+import {
+  AccessTokenPayload,
+  RefreshTokenPayload
+} from "../../types/TokenPayload";
 
 /**
  * Generates and signs a new access token, valid for 15 minutes
