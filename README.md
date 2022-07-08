@@ -37,3 +37,6 @@ $ npx prisma migrate dev
 ```shell
 $ npx prisma migrate deploy
 ```
+
+## Testing
+See Nexus + Prisma testing guide here: https://nexusjs.org/docs/getting-started/tutorial/chapter-testing-with-prisma

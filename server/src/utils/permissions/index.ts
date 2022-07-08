@@ -23,7 +23,7 @@ const rules = {
       }
     }).user()
     if (author) {
-    return userId === author.id
+      return userId === author.id
     } else {
       return false
     }
