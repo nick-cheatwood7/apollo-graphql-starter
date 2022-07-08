@@ -13,7 +13,7 @@
     "migrate": "npx prisma migrate dev",
     "studio": "npx prisma studio",
     "start": "tsc && node dist/index.js",
-    "test": "jest --config jest.config.ts ./__tests__"
+    "test": "NODE_ENV=test && jest --config jest.config.ts ./__tests__"
   },
   "license": "MIT",
   "dependencies": {
@@ -39,6 +39,7 @@
     "@types/jest": "^28.1.4",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^18.0.1",
+    "axios": "^0.27.2",
     "gen-env-types": "^1.3.4",
     "jest": "^28.1.2",
     "nodemon": "^2.0.18",
