@@ -7,8 +7,6 @@ import { PORT } from "../constants";
 import { prisma } from "../prisma";
 
 import { schema } from "../../modules/graphql/schema";
-import { applyMiddleware } from "graphql-middleware";
-import { permissions } from "../permissions";
 
 const app = express();
 
@@ -37,7 +35,7 @@ function buildContext({ req, res }: Context) {
 
 export async function createServer() {
   const server = new ApolloServer({
-    schema: applyMiddleware(schema, permissions), // apply permissions
+    schema: schema, // apply permissions
     csrfPrevention: true,
     cache: "bounded",
     context: buildContext

@@ -1,8 +1,10 @@
+import { applyMiddleware } from "graphql-middleware";
 import { makeSchema, fieldAuthorizePlugin } from "nexus";
 import { join } from "path";
+import { permissions } from "../../utils/permissions";
 import * as types from "./types";
 
-export const schema = makeSchema({
+export const schemaWithoutPermissions = makeSchema({
   types,
   contextType: {
     module: join(process.cwd(), "./src/types/Context.ts"),
@@ -21,3 +23,5 @@ export const schema = makeSchema({
   },
   plugins: [fieldAuthorizePlugin()]
 });
+
+export const schema = applyMiddleware(schemaWithoutPermissions, permissions)
