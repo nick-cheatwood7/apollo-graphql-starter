@@ -1,11 +1,12 @@
 import { User } from "@prisma/client";
-import { sign } from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
 import { Response } from "express";
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../constants";
 import {
   AccessTokenPayload,
   RefreshTokenPayload
 } from "../../types/TokenPayload";
+import { Context } from "../../types/Context";
 
 /**
  * Generates and signs a new access token, valid for 15 minutes
@@ -52,3 +53,14 @@ export const sendRefreshToken = (res: Response, token: string) => {
     sameSite: "none"
   });
 };
+
+export const getUserId = (context: Context): string | null => {
+  const authHeader = context.req.headers["authorization"]
+  if (authHeader) {
+    const token = authHeader.replace("Bearer ", "")
+    const verifiedToken = verify(token, ACCESS_TOKEN_SECRET) as AccessTokenPayload
+    context.payload = verifiedToken
+    return verifiedToken && verifiedToken.userId
+  }
+  return null
+}

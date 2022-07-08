@@ -22,3 +22,18 @@ $ psql -h {{HOST}} -U {{USER}} -p {{PORT}} -d {{DATABASE}}
 ```shell
 $ docker-compose down
 ```
+
+## Prisma
+**Generate new Migration**
+```shell
+$ yarn migrate
+```
+or
+```shell
+$ npx prisma migrate dev
+```
+
+**Deploy migration**
+```shell
+$ npx prisma migrate deploy
+```
