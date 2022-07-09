@@ -6,7 +6,6 @@
 scalar Date
 
 type LoginResponse {
-  accessToken: String
   error: Boolean!
   message: String!
 }
@@ -107,7 +106,6 @@ type User implements Node {
   lastLogin: Date
   lastName: String
   posts: [Post]
-  tokenVersion: Int!
 
   """the last modifification timestamp of the resource"""
   updatedAt: Date

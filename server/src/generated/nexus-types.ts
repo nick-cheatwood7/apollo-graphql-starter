@@ -62,7 +62,6 @@ export interface NexusGenScalars {
 
 export interface NexusGenObjects {
   LoginResponse: { // root type
-    accessToken?: string | null; // String
     error: boolean; // Boolean!
     message: string; // String!
   }
@@ -95,7 +94,6 @@ export interface NexusGenObjects {
     id: string; // ID!
     lastLogin?: NexusGenScalars['Date'] | null; // Date
     lastName?: string | null; // String
-    tokenVersion: number; // Int!
     updatedAt?: NexusGenScalars['Date'] | null; // Date
   }
 }
@@ -113,7 +111,6 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
   LoginResponse: { // field return type
-    accessToken: string | null; // String
     error: boolean; // Boolean!
     message: string; // String!
   }
@@ -162,7 +159,6 @@ export interface NexusGenFieldTypes {
     lastLogin: NexusGenScalars['Date'] | null; // Date
     lastName: string | null; // String
     posts: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
-    tokenVersion: number; // Int!
     updatedAt: NexusGenScalars['Date'] | null; // Date
   }
   Node: { // field return type
@@ -174,7 +170,6 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenFieldTypeNames {
   LoginResponse: { // field return type name
-    accessToken: 'String'
     error: 'Boolean'
     message: 'String'
   }
@@ -223,7 +218,6 @@ export interface NexusGenFieldTypeNames {
     lastLogin: 'Date'
     lastName: 'String'
     posts: 'Post'
-    tokenVersion: 'Int'
     updatedAt: 'Date'
   }
   Node: { // field return type name
