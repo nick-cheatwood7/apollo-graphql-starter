@@ -1,13 +1,26 @@
+# 1. specify the version of docker compose to use
+version: "3.1"
+# 2. Generate the services needed (postgres, redis)
 services:
-  database:
-    image: postgres
-    ports:
-      - 5001:5432 # map port 5001 on local machine to 5432 in docker
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=dev
+    database:
+        image: postgres
+        ports:
+            - 5001:5432 # map port 5001 on local machine to 5432 in docker
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=dev
+    redis:
+        image: redis
+        restart: always
+        ports:
+            - 6379:6379
+        volumes:
+            - ./cache:/data
+        command: redis-server --requirepass X3hk8WDSZ2kYzab2
+
 volumes:
-  pgdata:
+    pgdata:
+    cache:
