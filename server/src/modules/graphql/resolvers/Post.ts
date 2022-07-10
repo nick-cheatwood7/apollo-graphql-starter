@@ -1,4 +1,4 @@
-import { extendType, idArg, nonNull, nullable } from "nexus";
+import { extendType, idArg, intArg, nonNull, nullable, stringArg } from "nexus";
 import { z } from "zod";
 import { NexusGenObjects } from "../../../generated/nexus-types";
 import { getUserId } from "../../../utils/services/authService";
@@ -25,7 +25,7 @@ export const CreatePostMutation = extendType({
                         "Invalid input";
                     return {
                         message,
-                        error: true
+                        error: true,
                     };
                 }
 
@@ -35,22 +35,22 @@ export const CreatePostMutation = extendType({
                     await ctx.db.post.create({
                         data: {
                             userId,
-                            ...options
-                        }
+                            ...options,
+                        },
                     });
                     return {
                         message: "Post created successfully!",
-                        error: false
+                        error: false,
                     };
                 } catch (error) {
                     return {
                         message: "Unable to create Post",
-                        error: true
+                        error: true,
                     };
                 }
-            }
+            },
         });
-    }
+    },
 });
 
 export const PostQuery = extendType({
@@ -66,9 +66,9 @@ export const PostQuery = extendType({
             ): Promise<NexusGenObjects["Post"] | null> => {
                 const post = await db.post.findFirst({ where: { id } });
                 return post;
-            }
+            },
         });
-    }
+    },
 });
 
 export const AllPostsQuery = extendType({
@@ -76,16 +76,38 @@ export const AllPostsQuery = extendType({
     definition(t) {
         t.list.field("posts", {
             type: Post,
+            args: {
+                limit: nonNull(
+                    intArg({ description: "how many posts to list at a time" })
+                ),
+                cursor: stringArg(),
+            },
             resolve: async (
                 _root,
-                _args,
+                { limit, cursor },
                 { db }
             ): Promise<NexusGenObjects["Post"][] | null> => {
-                const posts = await db.post.findMany();
-                return posts;
-            }
+                const realLimit = Math.min(50, limit);
+                const dateCursor = new Date(parseInt(cursor as string));
+                if (cursor) {
+                    return await db.post.findMany({
+                        where: { createdAt: { lt: dateCursor } },
+                        take: realLimit,
+                        orderBy: {
+                            createdAt: "desc",
+                        },
+                    });
+                } else {
+                    return await db.post.findMany({
+                        take: realLimit,
+                        orderBy: {
+                            createdAt: "desc",
+                        },
+                    });
+                }
+            },
         });
-    }
+    },
 });
 
 export const UpdatePostMutation = extendType({
@@ -95,7 +117,7 @@ export const UpdatePostMutation = extendType({
             type: UpdatePostResult,
             args: {
                 id: nonNull(idArg({ description: "id of the post to update" })),
-                options: nonNull(UpdatePostInput)
+                options: nonNull(UpdatePostInput),
             },
             resolve: async (
                 _root,
@@ -111,7 +133,7 @@ export const UpdatePostMutation = extendType({
                         "Invalid input";
                     return {
                         message,
-                        error: true
+                        error: true,
                     };
                 }
 
@@ -119,21 +141,21 @@ export const UpdatePostMutation = extendType({
                     // update post
                     await db.post.update({
                         where: { id },
-                        data: { ...options }
+                        data: { ...options },
                     });
                     return {
                         message: "Post updated successfully!",
-                        error: false
+                        error: false,
                     };
                 } catch (error) {
                     return {
                         message: "Unable to update post",
-                        error: true
+                        error: true,
                     };
                 }
-            }
+            },
         });
-    }
+    },
 });
 
 export const DeletePostMutation = extendType({
@@ -144,7 +166,7 @@ export const DeletePostMutation = extendType({
             args: {
                 id: nonNull(
                     idArg({ description: "the id of the post to delete" })
-                )
+                ),
             },
             resolve: async (
                 _root,
@@ -156,15 +178,15 @@ export const DeletePostMutation = extendType({
                     await db.post.delete({ where: { id } });
                     return {
                         message: "Post deleted successfully!",
-                        error: false
+                        error: false,
                     };
                 } catch (error) {
                     return {
                         message: "Unable to delete Post",
-                        error: true
+                        error: true,
                     };
                 }
-            }
+            },
         });
-    }
+    },
 });

@@ -5,12 +5,18 @@
 """Date custom scalar type"""
 scalar Date
 
+type DefaultResult {
+  errors: Boolean!
+  message: String!
+}
+
 type LoginResponse {
   error: Boolean!
   message: String!
 }
 
 type Mutation {
+  changePassword(newPassword: String!, token: String!): DefaultResult
   createPost(options: UpdatePostInput!): UpdatePostResult
   deletePost(
     """the id of the post to delete"""
@@ -20,7 +26,9 @@ type Mutation {
     """id of the user to delete"""
     id: ID!
   ): UpdateUserResult
+  forgotPassword(email: String!): DefaultResult
   login(email: String!, password: String!): LoginResponse
+  logout: Boolean
   register(options: RegisterInput!): RegisterResponse
   updatePost(
     """id of the post to update"""
@@ -66,7 +74,12 @@ type Query {
     """id of the post"""
     id: ID!
   ): Post
-  posts: [Post]
+  posts(
+    cursor: String
+
+    """how many posts to list at a time"""
+    limit: Int!
+  ): [Post]
   test(bool: Boolean!): Boolean
   user(
     """id of the user"""

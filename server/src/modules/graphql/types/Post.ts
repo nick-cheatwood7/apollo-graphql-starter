@@ -1,5 +1,5 @@
 import { inputObjectType, objectType } from "nexus";
-import { Node } from "./Node";
+import { Node } from "./Globals";
 import { User } from "./User";
 
 export const Post = objectType({
@@ -13,9 +13,9 @@ export const Post = objectType({
             type: User,
             resolve: async (root, _args, ctx) => {
                 return ctx.db.user.findUnique({ where: { id: root.userId } });
-            }
+            },
         });
-    }
+    },
 });
 
 export const UpdatePostInput = inputObjectType({
@@ -23,7 +23,7 @@ export const UpdatePostInput = inputObjectType({
     definition(t) {
         t.nonNull.string("title");
         t.nonNull.string("message");
-    }
+    },
 });
 
 export const UpdatePostResult = objectType({
@@ -31,5 +31,5 @@ export const UpdatePostResult = objectType({
     definition(t) {
         t.nonNull.string("message");
         t.nonNull.boolean("error");
-    }
+    },
 });

@@ -61,6 +61,10 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  DefaultResult: { // root type
+    errors: boolean; // Boolean!
+    message: string; // String!
+  }
   LoginResponse: { // root type
     error: boolean; // Boolean!
     message: string; // String!
@@ -110,15 +114,22 @@ export type NexusGenRootTypes = NexusGenInterfaces & NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  DefaultResult: { // field return type
+    errors: boolean; // Boolean!
+    message: string; // String!
+  }
   LoginResponse: { // field return type
     error: boolean; // Boolean!
     message: string; // String!
   }
   Mutation: { // field return type
+    changePassword: NexusGenRootTypes['DefaultResult'] | null; // DefaultResult
     createPost: NexusGenRootTypes['UpdatePostResult'] | null; // UpdatePostResult
     deletePost: NexusGenRootTypes['UpdatePostResult'] | null; // UpdatePostResult
     deleteUser: NexusGenRootTypes['UpdateUserResult'] | null; // UpdateUserResult
+    forgotPassword: NexusGenRootTypes['DefaultResult'] | null; // DefaultResult
     login: NexusGenRootTypes['LoginResponse'] | null; // LoginResponse
+    logout: boolean | null; // Boolean
     register: NexusGenRootTypes['RegisterResponse'] | null; // RegisterResponse
     updatePost: NexusGenRootTypes['UpdatePostResult'] | null; // UpdatePostResult
     updateUser: NexusGenRootTypes['UpdateUserResult'] | null; // UpdateUserResult
@@ -170,15 +181,22 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  DefaultResult: { // field return type name
+    errors: 'Boolean'
+    message: 'String'
+  }
   LoginResponse: { // field return type name
     error: 'Boolean'
     message: 'String'
   }
   Mutation: { // field return type name
+    changePassword: 'DefaultResult'
     createPost: 'UpdatePostResult'
     deletePost: 'UpdatePostResult'
     deleteUser: 'UpdateUserResult'
+    forgotPassword: 'DefaultResult'
     login: 'LoginResponse'
+    logout: 'Boolean'
     register: 'RegisterResponse'
     updatePost: 'UpdatePostResult'
     updateUser: 'UpdateUserResult'
@@ -231,6 +249,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    changePassword: { // args
+      newPassword: string; // String!
+      token: string; // String!
+    }
     createPost: { // args
       options: NexusGenInputs['UpdatePostInput']; // UpdatePostInput!
     }
@@ -239,6 +261,9 @@ export interface NexusGenArgTypes {
     }
     deleteUser: { // args
       id: string; // ID!
+    }
+    forgotPassword: { // args
+      email: string; // String!
     }
     login: { // args
       email: string; // String!
@@ -259,6 +284,10 @@ export interface NexusGenArgTypes {
   Query: {
     post: { // args
       id: string; // ID!
+    }
+    posts: { // args
+      cursor?: string | null; // String
+      limit: number; // Int!
     }
     test: { // args
       bool: boolean; // Boolean!
