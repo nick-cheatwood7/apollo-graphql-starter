@@ -74,7 +74,12 @@ type Query {
     """id of the post"""
     id: ID!
   ): Post
-  posts: [Post]
+  posts(
+    cursor: String
+
+    """how many posts to list at a time"""
+    limit: Int!
+  ): [Post]
   test(bool: Boolean!): Boolean
   user(
     """id of the user"""

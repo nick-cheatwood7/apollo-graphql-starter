@@ -285,6 +285,10 @@ export interface NexusGenArgTypes {
     post: { // args
       id: string; // ID!
     }
+    posts: { // args
+      cursor?: string | null; // String
+      limit: number; // Int!
+    }
     test: { // args
       bool: boolean; // Boolean!
     }
