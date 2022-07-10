@@ -40,11 +40,12 @@ app.use(
     })
 );
 
-function buildContext({ req, res }: Context) {
+function buildContext({ req, res }: Context): Context {
     return {
         req,
         res,
         db: prisma,
+        redis: redis,
     } as Context;
 }
 

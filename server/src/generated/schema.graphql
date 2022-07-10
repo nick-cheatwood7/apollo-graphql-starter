@@ -16,6 +16,7 @@ type LoginResponse {
 }
 
 type Mutation {
+  changePassword(newPassword: String!, token: String!): DefaultResult
   createPost(options: UpdatePostInput!): UpdatePostResult
   deletePost(
     """the id of the post to delete"""

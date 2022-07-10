@@ -16,10 +16,16 @@ import {
     RegisterResponse,
 } from "../types/User";
 import { getUserId } from "../../../utils/services/authService";
-import { COOKIE_NAME } from "../../../utils/constants";
+import {
+    COOKIE_NAME,
+    FORGET_PASSWORD_PREFIX,
+    PORT,
+} from "../../../utils/constants";
 import { sendEmail } from "../../../utils/services/emailService";
 import { validateEmail } from "../../../utils/validators/emailValidation";
 import { DefaultResult } from "../types/Globals";
+import { nanoid } from "nanoid";
+import { validatePassword } from "../../../utils/validators/passwordValidation";
 
 export const RegisterMutation = extendType({
     type: "Mutation",
@@ -324,11 +330,90 @@ export const ForgotPasswordMutation = extendType({
                         errors: true,
                     };
                 }
+
+                // store reset link in redis
+                const token = nanoid();
+                await ctx.redis.set(
+                    FORGET_PASSWORD_PREFIX + token,
+                    user.id,
+                    "EX",
+                    1000 * 60 * 60 * 24 * 2
+                ); // 2 days
+
                 // mock sending an email
-                await sendEmail(user.email);
+                await sendEmail(
+                    user.email,
+                    `Your reset link is: http://localhost:${PORT}/reset_password/${token}`
+                );
+
                 return {
                     message:
                         "Password reset link sent. Please check your inbox.",
+                    errors: false,
+                };
+            },
+        });
+    },
+});
+
+export const ChangePasswordMutation = extendType({
+    type: "Mutation",
+    definition(t) {
+        t.field("changePassword", {
+            type: DefaultResult,
+            args: {
+                token: nonNull(stringArg()),
+                newPassword: nonNull(stringArg()),
+            },
+            resolve: async (
+                _root,
+                { token, newPassword },
+                { req, db, redis }
+            ): Promise<NexusGenObjects["DefaultResult"]> => {
+                try {
+                    // validate new password
+                    validatePassword.parse(newPassword);
+                } catch (error) {
+                    const message = (error as z.ZodError).issues[0].message;
+                    return {
+                        message,
+                        errors: true,
+                    };
+                }
+
+                // find the userId in redis
+                const userId = await redis.get(FORGET_PASSWORD_PREFIX + token);
+                if (!userId) {
+                    return {
+                        message: "Token expired.",
+                        errors: true,
+                    };
+                }
+
+                try {
+                    // update user's password
+                    const hashedPassword = await argon2.hash(newPassword);
+                    await db.user.update({
+                        where: { id: userId },
+                        data: {
+                            password: hashedPassword,
+                            lastLogin: new Date(),
+                        },
+                    });
+                    // remove token from redis
+                    await redis.del(FORGET_PASSWORD_PREFIX + token);
+                } catch (error) {
+                    return {
+                        message: "Could not change password, please try again.",
+                        errors: true,
+                    };
+                }
+
+                // log in user after password change
+                req.session.userId = userId;
+
+                return {
+                    message: "Password reset successfully!",
                     errors: false,
                 };
             },

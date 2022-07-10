@@ -123,6 +123,7 @@ export interface NexusGenFieldTypes {
     message: string; // String!
   }
   Mutation: { // field return type
+    changePassword: NexusGenRootTypes['DefaultResult'] | null; // DefaultResult
     createPost: NexusGenRootTypes['UpdatePostResult'] | null; // UpdatePostResult
     deletePost: NexusGenRootTypes['UpdatePostResult'] | null; // UpdatePostResult
     deleteUser: NexusGenRootTypes['UpdateUserResult'] | null; // UpdateUserResult
@@ -189,6 +190,7 @@ export interface NexusGenFieldTypeNames {
     message: 'String'
   }
   Mutation: { // field return type name
+    changePassword: 'DefaultResult'
     createPost: 'UpdatePostResult'
     deletePost: 'UpdatePostResult'
     deleteUser: 'UpdateUserResult'
@@ -247,6 +249,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    changePassword: { // args
+      newPassword: string; // String!
+      token: string; // String!
+    }
     createPost: { // args
       options: NexusGenInputs['UpdatePostInput']; // UpdatePostInput!
     }
