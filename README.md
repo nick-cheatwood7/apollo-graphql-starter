@@ -2,7 +2,6 @@
 
 🚀👨‍🚀 A starter project for GraphQL-backed projects using Apollo Server
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/nick-cheatwood7/apollo-graphql-starter)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/nick-cheatwood7/apollo-graphql-starter)
 
 **Push (upload) app image**
