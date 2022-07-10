@@ -36,6 +36,7 @@ app.use(
             maxAge: 1000 * 60 * 60 * 24 * 7, // days
             // sameSite: __prod__ ? "none" : "lax",
             sameSite: "none",
+            domain: __prod__ ? ".your-domain-here" : undefined,
         },
     })
 );
