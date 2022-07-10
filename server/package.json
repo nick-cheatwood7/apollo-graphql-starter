@@ -10,7 +10,6 @@
     "watch": "tsc -w",
     "build": "tsc",
     "dev": "nodemon dist/index.js",
-    "prebuild": "",
     "migrate": "npx prisma migrate dev",
     "studio": "npx prisma studio",
     "start": "tsc && node dist/index.js",

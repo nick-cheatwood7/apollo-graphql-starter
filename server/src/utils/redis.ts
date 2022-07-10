@@ -1,12 +1,12 @@
-import Redis from 'ioredis'
-import { REDIS_URI, __prod__ } from './constants';
+import Redis from "ioredis";
+import { REDIS_URL, __prod__ } from "./constants";
 
 declare global {
-  var redis: Redis | undefined;
+    var redis: Redis | undefined;
 }
 
-export const redis = global.redis || new Redis(REDIS_URI)
+export const redis = global.redis || new Redis(REDIS_URL);
 
 if (!__prod__) {
-  global.redis = redis
+    global.redis = redis;
 }
