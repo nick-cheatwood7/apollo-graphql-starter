@@ -2,15 +2,16 @@ import { allow, IRule, rule, shield } from "graphql-shield";
 import { getUserId } from "../services/authService";
 import { Context } from "../../types/Context";
 import { NexusGenFieldTypes } from "../../generated/nexus-types";
+import { RuleTrue } from "graphql-shield/dist/rules";
 
 type Queries = keyof NexusGenFieldTypes["Query"];
 type SupportedQueries = {
-    [Q in Queries]?: IRule;
+    [Q in Queries]?: IRule | RuleTrue;
 };
 
 type Mutations = keyof NexusGenFieldTypes["Mutation"];
 type SupportedMutations = {
-    [M in Mutations]?: IRule;
+    [M in Mutations]?: IRule | RuleTrue;
 };
 
 const rules = {
@@ -50,12 +51,16 @@ const rules = {
 export const permissions = shield(
     {
         Query: {
+            test: allow,
             user: rules.isAuthenticatedUser,
             users: rules.isAuthenticatedUser,
             post: rules.isAuthenticatedUser,
-            posts: rules.isAuthenticatedUser
+            posts: rules.isAuthenticatedUser,
+            me: rules.isAuthenticatedUser
         } as SupportedQueries,
         Mutation: {
+            login: allow,
+            register: allow,
             updateUser: rules.isCurrentUser,
             deleteUser: rules.isCurrentUser,
             createPost: rules.isAuthenticatedUser,

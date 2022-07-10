@@ -1,18 +1,4 @@
-import {
-    extendType,
-    inputObjectType,
-    list,
-    nonNull,
-    nullable,
-    objectType,
-    stringArg
-} from "nexus";
-import {
-    deleteUserById,
-    getAllUsers,
-    getUserById,
-    updateUserById
-} from "../resolvers/User";
+import { inputObjectType, objectType } from "nexus";
 import { Node } from "./Node";
 import { Post } from "./Post";
 
@@ -35,40 +21,29 @@ export const User = objectType({
     }
 });
 
-export const UserById = extendType({
-    type: "Query",
+export const LoginResponse = objectType({
+    name: "LoginResponse",
     definition(t) {
-        t.field("user", {
-            type: nullable(User),
-            args: { id: nonNull(stringArg({ description: "id of the user" })) },
-            resolve: getUserById
-        });
+        t.nonNull.string("message");
+        t.nonNull.boolean("error");
     }
 });
 
-export const AllUsers = extendType({
-    type: "Query",
+export const RegisterResponse = objectType({
+    name: "RegisterResponse",
     definition(t) {
-        t.field("users", {
-            type: nullable(list(User)),
-            resolve: getAllUsers
-        });
+        t.nonNull.string("message");
+        t.nonNull.boolean("error");
     }
 });
 
-export const EditUser = extendType({
-    type: "Mutation",
+export const RegisterInput = inputObjectType({
+    name: "RegisterInput",
     definition(t) {
-        t.field("updateUser", {
-            type: UpdateUserResult,
-            args: {
-                id: nonNull(
-                    stringArg({ description: "id of the User to edit" })
-                ),
-                options: nonNull(EditUserInput)
-            },
-            resolve: updateUserById
-        });
+        t.nonNull.string("email");
+        t.nonNull.string("password");
+        t.nonNull.string("firstName");
+        t.string("lastName");
     }
 });
 
@@ -87,16 +62,5 @@ export const UpdateUserResult = objectType({
     definition(t) {
         t.nonNull.string("message");
         t.nonNull.boolean("error");
-    }
-});
-
-export const DeleteUserById = extendType({
-    type: "Mutation",
-    definition(t) {
-        t.field("deleteUser", {
-            type: UpdateUserResult,
-            args: { id: nonNull(stringArg()) },
-            resolve: deleteUserById
-        });
     }
 });

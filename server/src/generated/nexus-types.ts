@@ -133,6 +133,7 @@ export interface NexusGenFieldTypes {
     userId: string; // String!
   }
   Query: { // field return type
+    me: NexusGenRootTypes['User'] | null; // User
     post: NexusGenRootTypes['Post'] | null; // Post
     posts: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
     test: boolean | null; // Boolean
@@ -192,6 +193,7 @@ export interface NexusGenFieldTypeNames {
     userId: 'String'
   }
   Query: { // field return type name
+    me: 'User'
     post: 'Post'
     posts: 'Post'
     test: 'Boolean'
@@ -233,10 +235,10 @@ export interface NexusGenArgTypes {
       options: NexusGenInputs['UpdatePostInput']; // UpdatePostInput!
     }
     deletePost: { // args
-      id: string; // String!
+      id: string; // ID!
     }
     deleteUser: { // args
-      id: string; // String!
+      id: string; // ID!
     }
     login: { // args
       email: string; // String!
@@ -246,23 +248,23 @@ export interface NexusGenArgTypes {
       options: NexusGenInputs['RegisterInput']; // RegisterInput!
     }
     updatePost: { // args
-      id: string; // String!
+      id: string; // ID!
       options: NexusGenInputs['UpdatePostInput']; // UpdatePostInput!
     }
     updateUser: { // args
-      id: string; // String!
+      id: string; // ID!
       options: NexusGenInputs['UpdateUserInput']; // UpdateUserInput!
     }
   }
   Query: {
     post: { // args
-      id: string; // String!
+      id: string; // ID!
     }
     test: { // args
       bool: boolean; // Boolean!
     }
     user: { // args
-      id: string; // String!
+      id: string; // ID!
     }
   }
 }

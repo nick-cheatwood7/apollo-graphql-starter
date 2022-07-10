@@ -12,14 +12,24 @@ type LoginResponse {
 
 type Mutation {
   createPost(options: UpdatePostInput!): UpdatePostResult
-  deletePost(id: String!): UpdatePostResult
-  deleteUser(id: String!): UpdateUserResult
+  deletePost(
+    """the id of the post to delete"""
+    id: ID!
+  ): UpdatePostResult
+  deleteUser(
+    """id of the user to delete"""
+    id: ID!
+  ): UpdateUserResult
   login(email: String!, password: String!): LoginResponse
   register(options: RegisterInput!): RegisterResponse
-  updatePost(id: String!, options: UpdatePostInput!): UpdatePostResult
+  updatePost(
+    """id of the post to update"""
+    id: ID!
+    options: UpdatePostInput!
+  ): UpdatePostResult
   updateUser(
-    """id of the User to edit"""
-    id: String!
+    """id of the user to update"""
+    id: ID!
     options: UpdateUserInput!
   ): UpdateUserResult
 }
@@ -51,12 +61,16 @@ type Post implements Node {
 }
 
 type Query {
-  post(id: String!): Post
+  me: User
+  post(
+    """id of the post"""
+    id: ID!
+  ): Post
   posts: [Post]
   test(bool: Boolean!): Boolean
   user(
     """id of the user"""
-    id: String!
+    id: ID!
   ): User
   users: [User]
 }
