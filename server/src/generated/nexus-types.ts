@@ -61,6 +61,10 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  DefaultResult: { // root type
+    errors: boolean; // Boolean!
+    message: string; // String!
+  }
   LoginResponse: { // root type
     error: boolean; // Boolean!
     message: string; // String!
@@ -110,6 +114,10 @@ export type NexusGenRootTypes = NexusGenInterfaces & NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  DefaultResult: { // field return type
+    errors: boolean; // Boolean!
+    message: string; // String!
+  }
   LoginResponse: { // field return type
     error: boolean; // Boolean!
     message: string; // String!
@@ -118,7 +126,9 @@ export interface NexusGenFieldTypes {
     createPost: NexusGenRootTypes['UpdatePostResult'] | null; // UpdatePostResult
     deletePost: NexusGenRootTypes['UpdatePostResult'] | null; // UpdatePostResult
     deleteUser: NexusGenRootTypes['UpdateUserResult'] | null; // UpdateUserResult
+    forgotPassword: NexusGenRootTypes['DefaultResult'] | null; // DefaultResult
     login: NexusGenRootTypes['LoginResponse'] | null; // LoginResponse
+    logout: boolean | null; // Boolean
     register: NexusGenRootTypes['RegisterResponse'] | null; // RegisterResponse
     updatePost: NexusGenRootTypes['UpdatePostResult'] | null; // UpdatePostResult
     updateUser: NexusGenRootTypes['UpdateUserResult'] | null; // UpdateUserResult
@@ -170,6 +180,10 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  DefaultResult: { // field return type name
+    errors: 'Boolean'
+    message: 'String'
+  }
   LoginResponse: { // field return type name
     error: 'Boolean'
     message: 'String'
@@ -178,7 +192,9 @@ export interface NexusGenFieldTypeNames {
     createPost: 'UpdatePostResult'
     deletePost: 'UpdatePostResult'
     deleteUser: 'UpdateUserResult'
+    forgotPassword: 'DefaultResult'
     login: 'LoginResponse'
+    logout: 'Boolean'
     register: 'RegisterResponse'
     updatePost: 'UpdatePostResult'
     updateUser: 'UpdateUserResult'
@@ -239,6 +255,9 @@ export interface NexusGenArgTypes {
     }
     deleteUser: { // args
       id: string; // ID!
+    }
+    forgotPassword: { // args
+      email: string; // String!
     }
     login: { // args
       email: string; // String!

@@ -5,6 +5,11 @@
 """Date custom scalar type"""
 scalar Date
 
+type DefaultResult {
+  errors: Boolean!
+  message: String!
+}
+
 type LoginResponse {
   error: Boolean!
   message: String!
@@ -20,7 +25,9 @@ type Mutation {
     """id of the user to delete"""
     id: ID!
   ): UpdateUserResult
+  forgotPassword(email: String!): DefaultResult
   login(email: String!, password: String!): LoginResponse
+  logout: Boolean
   register(options: RegisterInput!): RegisterResponse
   updatePost(
     """id of the post to update"""

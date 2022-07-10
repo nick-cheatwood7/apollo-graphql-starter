@@ -4,7 +4,7 @@ import argon2 from "argon2";
 import {
     registrationValidation,
     loginValidation,
-    updateUserValidation
+    updateUserValidation,
 } from "../../../utils/validators/userValidation";
 import { NexusGenObjects } from "../../../generated/nexus-types";
 import {
@@ -13,9 +13,13 @@ import {
     User,
     LoginResponse,
     RegisterInput,
-    RegisterResponse
+    RegisterResponse,
 } from "../types/User";
 import { getUserId } from "../../../utils/services/authService";
+import { COOKIE_NAME } from "../../../utils/constants";
+import { sendEmail } from "../../../utils/services/emailService";
+import { validateEmail } from "../../../utils/validators/emailValidation";
+import { DefaultResult } from "../types/Globals";
 
 export const RegisterMutation = extendType({
     type: "Mutation",
@@ -37,7 +41,7 @@ export const RegisterMutation = extendType({
                         "Invalid input";
                     return {
                         message,
-                        error: true
+                        error: true,
                     };
                 }
 
@@ -48,23 +52,23 @@ export const RegisterMutation = extendType({
                         data: {
                             ...options,
                             email: options.email.toLowerCase(),
-                            password: hashedPassword
-                        }
+                            password: hashedPassword,
+                        },
                     });
                     return {
                         message:
                             "Thank you for registering! Please check your email to validate your account",
-                        error: false
+                        error: false,
                     };
                 } catch (error) {
                     return {
                         message: "Account already exists",
-                        error: true
+                        error: true,
                     };
                 }
-            }
+            },
         });
-    }
+    },
 });
 
 export const LoginMutation = extendType({
@@ -74,7 +78,7 @@ export const LoginMutation = extendType({
             type: LoginResponse,
             args: {
                 email: nonNull(stringArg()),
-                password: nonNull(stringArg())
+                password: nonNull(stringArg()),
             },
             resolve: async (
                 _root,
@@ -90,17 +94,17 @@ export const LoginMutation = extendType({
                         "Invalid input";
                     return {
                         message,
-                        error: true
+                        error: true,
                     };
                 }
                 // find user and verify password
                 const user = await db.user.findUnique({
-                    where: { email: email.toLowerCase() }
+                    where: { email: email.toLowerCase() },
                 });
                 if (!user) {
                     return {
                         message: "No account found",
-                        error: true
+                        error: true,
                     };
                 }
 
@@ -108,14 +112,14 @@ export const LoginMutation = extendType({
                 if (!isValid) {
                     return {
                         message: "Invalid password",
-                        error: true
+                        error: true,
                     };
                 }
 
                 // update last login for this user
                 await db.user.update({
                     where: { id: user.id },
-                    data: { lastLogin: new Date() }
+                    data: { lastLogin: new Date() },
                 });
 
                 // Update the session
@@ -124,11 +128,11 @@ export const LoginMutation = extendType({
                 // send access token
                 return {
                     message: "Logged in successfully!",
-                    error: false
+                    error: false,
                 };
-            }
+            },
         });
-    }
+    },
 });
 
 export const UserQuery = extendType({
@@ -144,9 +148,9 @@ export const UserQuery = extendType({
             ): Promise<NexusGenObjects["User"] | null> => {
                 const user = await ctx.db.user.findUnique({ where: { id } });
                 return user;
-            }
+            },
         });
-    }
+    },
 });
 
 export const AllUsersQuery = extendType({
@@ -161,9 +165,9 @@ export const AllUsersQuery = extendType({
             ): Promise<NexusGenObjects["User"][] | null> => {
                 const users = await ctx.db.user.findMany();
                 return users;
-            }
+            },
         });
-    }
+    },
 });
 
 export const UpdateUserMutation = extendType({
@@ -173,7 +177,7 @@ export const UpdateUserMutation = extendType({
             type: UpdateUserResult,
             args: {
                 id: nonNull(idArg({ description: "id of the user to update" })),
-                options: nonNull(EditUserInput)
+                options: nonNull(EditUserInput),
             },
             resolve: async (
                 _root,
@@ -189,7 +193,7 @@ export const UpdateUserMutation = extendType({
                         "Invalid input";
                     return {
                         message,
-                        error: true
+                        error: true,
                     };
                 }
 
@@ -197,21 +201,21 @@ export const UpdateUserMutation = extendType({
                     // update the user
                     await db.user.update({
                         where: { id },
-                        data: { ...options }
+                        data: { ...options },
                     });
                     return {
                         message: "User updated successfully!",
-                        error: false
+                        error: false,
                     };
                 } catch (err) {
                     return {
                         message: "Unable to update user",
-                        error: true
+                        error: true,
                     };
                 }
-            }
+            },
         });
-    }
+    },
 });
 
 export const DeleteUserMutation = extendType({
@@ -220,7 +224,7 @@ export const DeleteUserMutation = extendType({
         t.field("deleteUser", {
             type: UpdateUserResult,
             args: {
-                id: nonNull(idArg({ description: "id of the user to delete" }))
+                id: nonNull(idArg({ description: "id of the user to delete" })),
             },
             resolve: async (
                 _root,
@@ -231,17 +235,17 @@ export const DeleteUserMutation = extendType({
                     await db.user.delete({ where: { id } });
                     return {
                         message: "User deleted successfully",
-                        error: false
+                        error: false,
                     };
                 } catch {
                     return {
                         message: "Unable to delete User",
-                        error: true
+                        error: true,
                     };
                 }
-            }
+            },
         });
-    }
+    },
 });
 
 export const MeQuery = extendType({
@@ -259,10 +263,75 @@ export const MeQuery = extendType({
                     return null;
                 }
                 const user = await ctx.db.user.findUnique({
-                    where: { id: userId }
+                    where: { id: userId },
                 });
                 return user;
-            }
+            },
         });
-    }
+    },
+});
+
+export const LogoutMutation = extendType({
+    type: "Mutation",
+    definition(t) {
+        t.boolean("logout", {
+            resolve: async (_root, _args, { req, res }): Promise<boolean> => {
+                return new Promise((resolve) => {
+                    // remove session from Redis
+                    req.session.destroy((err) => {
+                        if (err) {
+                            console.error(err);
+                            resolve(false);
+                            return;
+                        }
+                        // clear http cookie
+                        res.clearCookie(COOKIE_NAME);
+                        resolve(true);
+                    });
+                });
+            },
+        });
+    },
+});
+
+export const ForgotPasswordMutation = extendType({
+    type: "Mutation",
+    definition(t) {
+        t.field("forgotPassword", {
+            type: DefaultResult,
+            args: { email: nonNull(stringArg()) },
+            resolve: async (
+                _root,
+                { email },
+                ctx
+            ): Promise<NexusGenObjects["DefaultResult"]> => {
+                try {
+                    validateEmail.parse(email);
+                } catch (error) {
+                    const message = (error as z.ZodError).issues[0].message;
+                    return {
+                        message,
+                        errors: true,
+                    };
+                }
+
+                const user = await ctx.db.user.findUnique({
+                    where: { email: email.toLowerCase() },
+                });
+                if (!user) {
+                    return {
+                        message: "No account found",
+                        errors: true,
+                    };
+                }
+                // mock sending an email
+                await sendEmail(user.email);
+                return {
+                    message:
+                        "Password reset link sent. Please check your inbox.",
+                    errors: false,
+                };
+            },
+        });
+    },
 });

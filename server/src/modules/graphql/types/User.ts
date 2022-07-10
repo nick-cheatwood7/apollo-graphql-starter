@@ -1,5 +1,5 @@
 import { inputObjectType, objectType } from "nexus";
-import { Node } from "./Node";
+import { Node } from "./Globals";
 import { Post } from "./Post";
 
 export const User = objectType({
@@ -16,9 +16,9 @@ export const User = objectType({
                 return await ctx.db.user
                     .findUnique({ where: { id: root.id } })
                     .posts();
-            }
+            },
         });
-    }
+    },
 });
 
 export const LoginResponse = objectType({
@@ -26,7 +26,7 @@ export const LoginResponse = objectType({
     definition(t) {
         t.nonNull.string("message");
         t.nonNull.boolean("error");
-    }
+    },
 });
 
 export const RegisterResponse = objectType({
@@ -34,7 +34,7 @@ export const RegisterResponse = objectType({
     definition(t) {
         t.nonNull.string("message");
         t.nonNull.boolean("error");
-    }
+    },
 });
 
 export const RegisterInput = inputObjectType({
@@ -44,7 +44,7 @@ export const RegisterInput = inputObjectType({
         t.nonNull.string("password");
         t.nonNull.string("firstName");
         t.string("lastName");
-    }
+    },
 });
 
 export const EditUserInput = inputObjectType({
@@ -54,7 +54,7 @@ export const EditUserInput = inputObjectType({
         t.nonNull.string("password");
         t.nonNull.string("firstName");
         t.string("lastName");
-    }
+    },
 });
 
 export const UpdateUserResult = objectType({
@@ -62,5 +62,5 @@ export const UpdateUserResult = objectType({
     definition(t) {
         t.nonNull.string("message");
         t.nonNull.boolean("error");
-    }
+    },
 });

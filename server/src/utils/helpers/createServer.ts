@@ -2,38 +2,30 @@ import { ApolloServer } from "apollo-server-express";
 import cors from "cors";
 import express from "express";
 import session from "express-session";
-import Redis from "ioredis";
+import { redis } from "../redis";
+import { corsConfig } from "../cors";
 import connectRedis from "connect-redis";
 import { Context } from "../../types/Context";
-import { PORT, REDIS_URI, SESSION_SECRET, __prod__ } from "../constants";
+import { COOKIE_NAME, SESSION_SECRET, __prod__ } from "../constants";
 import { prisma } from "../prisma";
 
 import { schema } from "../../modules/graphql/schema";
 
 const app = express();
-const redisClient = new Redis(REDIS_URI);
 const RedisStore = connectRedis(session);
 
 // init middleware
 app.set("trust proxy", !__prod__);
-app.use(
-    cors({
-        credentials: true,
-        origin: [
-            "https://studio.apollographql.com",
-            `http://localhost:${PORT}/graphql`
-        ]
-    })
-);
+app.use(cors(corsConfig));
 app.use(express.json());
 
 // configure session store
 app.use(
     session({
-        name: "qid",
+        name: COOKIE_NAME,
         store: new RedisStore({
-            client: redisClient,
-            disableTouch: true
+            client: redis,
+            disableTouch: true,
         }),
         secret: SESSION_SECRET,
         resave: false,
@@ -43,8 +35,8 @@ app.use(
             secure: true,
             maxAge: 1000 * 60 * 60 * 24 * 7, // days
             // sameSite: __prod__ ? "none" : "lax",
-            sameSite: "none"
-        }
+            sameSite: "none",
+        },
     })
 );
 
@@ -52,7 +44,7 @@ function buildContext({ req, res }: Context) {
     return {
         req,
         res,
-        db: prisma
+        db: prisma,
     } as Context;
 }
 
@@ -61,7 +53,7 @@ export async function createServer() {
         schema: schema, // apply permissions
         csrfPrevention: true,
         cache: "bounded",
-        context: buildContext
+        context: buildContext,
     });
 
     return { app, server };
