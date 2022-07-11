@@ -9,3 +9,7 @@ export interface Context {
     db: PrismaClient;
     redis: RedisClient;
 }
+
+export type RequestWithSession = {
+    session: Express.SessionStore & Session
+} & Request

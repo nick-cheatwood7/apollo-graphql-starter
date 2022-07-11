@@ -14,7 +14,7 @@ export const CreatePostMutation = extendType({
             resolve: async (
                 _root,
                 { options },
-                ctx
+                { req, db }
             ): Promise<NexusGenObjects["UpdatePostResult"]> => {
                 try {
                     // validate input
@@ -29,10 +29,10 @@ export const CreatePostMutation = extendType({
                     };
                 }
 
-                const userId = getUserId(ctx) as string;
+                const userId = getUserId(req) as string;
                 try {
                     // create the record
-                    await ctx.db.post.create({
+                    await db.post.create({
                         data: {
                             userId,
                             ...options,

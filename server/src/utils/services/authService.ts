@@ -1,6 +1,6 @@
 import { Context } from "../../types/Context";
 
-export const getUserId = (context: Context): string | null => {
-    const userId = context.req.session.userId || null;
+export const getUserId = (req: Context["req"]): string | null => {
+    const userId = req.session.userId || null;
     return userId;
 };
