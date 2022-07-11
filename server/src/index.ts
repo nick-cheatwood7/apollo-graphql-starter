@@ -1,5 +1,5 @@
 import { createServer } from "./utils/helpers/createServer";
-import { PORT } from "./utils/constants";
+import { CORS_ORIGIN, PORT } from "./utils/constants";
 
 const main = async () => {
     const { app, server } = await createServer();
@@ -8,7 +8,10 @@ const main = async () => {
     await server.start();
     server.applyMiddleware({
         app,
-        cors: false
+        cors: {
+            credentials: true,
+            origin: ["https://studio.apollographql.com", CORS_ORIGIN],
+        }
     });
 
     // init Express app
