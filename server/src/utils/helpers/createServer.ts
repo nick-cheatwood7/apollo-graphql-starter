@@ -1,9 +1,7 @@
 import { ApolloServer } from "apollo-server-express";
-import cors from "cors";
 import express from "express";
 import session from "express-session";
 import { redis } from "../redis";
-import { corsConfig } from "../cors";
 import connectRedis from "connect-redis";
 import { Context } from "../../types/Context";
 import { COOKIE_NAME, SESSION_SECRET, __prod__ } from "../constants";
@@ -16,8 +14,8 @@ const RedisStore = connectRedis(session);
 
 // init middleware
 app.set("trust proxy", !__prod__);
-app.use(cors(corsConfig));
-app.use(express.json());
+app.use(express.json())
+app.use(express.text())
 
 // configure session store
 app.use(
@@ -32,11 +30,12 @@ app.use(
         saveUninitialized: false,
         cookie: {
             httpOnly: true,
+            // secure: __prod__ ? true : "auto",
             secure: true,
             maxAge: 1000 * 60 * 60 * 24 * 7, // days
             // sameSite: __prod__ ? "none" : "lax",
             sameSite: "none",
-            domain: __prod__ ? ".your-domain-here" : undefined,
+            // domain: __prod__ ? ".your-domain-here" : "localhost",
         },
     })
 );
