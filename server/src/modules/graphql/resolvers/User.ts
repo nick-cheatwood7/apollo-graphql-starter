@@ -262,13 +262,13 @@ export const MeQuery = extendType({
             resolve: async (
                 _root,
                 _args,
-                ctx
+                { req, db }
             ): Promise<NexusGenObjects["User"] | null> => {
-                const userId = getUserId(ctx);
+                const userId = getUserId(req);
                 if (!userId) {
                     return null;
                 }
-                const user = await ctx.db.user.findUnique({
+                const user = await db.user.findUnique({
                     where: { id: userId },
                 });
                 return user;

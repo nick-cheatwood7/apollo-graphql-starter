@@ -16,14 +16,14 @@ type SupportedMutations = {
 
 const rules = {
     isAuthenticatedUser: rule({ cache: "contextual" })(
-        async (_parent, _args, context: Context) => {
-            const userId = getUserId(context);
+        async (_parent, _args, { req }: Context) => {
+            const userId = getUserId(req);
             return Boolean(userId);
         }
     ),
-    isCurrentUser: rule()(async (_parent, args, context: Context) => {
-        const userId = getUserId(context);
-        const user = await context.db.user.findUnique({
+    isCurrentUser: rule()(async (_parent, args, { req, db }: Context) => {
+        const userId = getUserId(req);
+        const user = await db.user.findUnique({
             where: { id: args.id }
         });
         if (!user) {
@@ -31,9 +31,9 @@ const rules = {
         }
         return userId === user.id;
     }),
-    isPostOwner: rule()(async (_parent, args, context: Context) => {
-        const userId = getUserId(context);
-        const author = await context.db.post
+    isPostOwner: rule()(async (_parent, args, { req, db }: Context) => {
+        const userId = getUserId(req);
+        const author = await db.post
             .findUnique({
                 where: {
                     id: args.id
